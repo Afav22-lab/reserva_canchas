@@ -23,16 +23,50 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
         ('completada', 'Completada'),
     ]
+    
+    HORARIOS_CHOICES = [
+        ('08:00', '8:00 AM'),
+        ('09:00', '9:00 AM'),
+        ('10:00', '10:00 AM'),
+        ('11:00', '11:00 AM'),
+        ('12:00', '12:00 PM'),
+        ('13:00', '1:00 PM'),
+        ('14:00', '2:00 PM'),
+        ('15:00', '3:00 PM'),
+        ('16:00', '4:00 PM'),
+        ('17:00', '5:00 PM'),
+        ('18:00', '6:00 PM'),
+        ('19:00', '7:00 PM'),
+        ('20:00', '8:00 PM'),
+        ('21:00', '9:00 PM'),
+        ('22:00', '10:00 PM'),
+        ('23:00', '11:00 PM'),
+        ('00:00', '12:00 AM'),
+    ]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservas')
     cancha = models.ForeignKey(Cancha, on_delete=models.CASCADE, related_name='reservas')
     fecha = models.DateField()
+    hora_inicio = models.CharField(max_length=5, choices=HORARIOS_CHOICES, default='08:00')
+    hora_fin = models.CharField(max_length=5, choices=HORARIOS_CHOICES, default='09:00')
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='confirmada')
     fecha_reserva = models.DateTimeField(auto_now_add=True)
     notas = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.usuario.username} - {self.cancha.nombre} - {self.fecha}"
+        return f"{self.usuario.username} - {self.cancha.nombre} - {self.fecha} ({self.hora_inicio}-{self.hora_fin})"
+    
+    @property
+    def duracion_horas(self):
+        """Calcula cuántas horas dura la reserva"""
+        hora_inicio = int(self.hora_inicio.split(':')[0])
+        hora_fin = int(self.hora_fin.split(':')[0])
+        
+        # Manejar el caso de medianoche (00:00)
+        if hora_fin == 0:
+            hora_fin = 24
+        
+        return hora_fin - hora_inicio
 
     @property
     def esta_vencida(self):

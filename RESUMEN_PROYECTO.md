@@ -76,7 +76,7 @@ reserva_canchas/
 
 ---
 
-## 🗄️ Modelos de Base de Datos
+##  Modelos de Base de Datos
 
 ### Cancha
 ```python

@@ -75,12 +75,6 @@ def lista_canchas(request):
 def reservar_cancha(request, cancha_id):
     cancha = get_object_or_404(Cancha, id=cancha_id, activa=True)
     
-    # Obtener fechas ya reservadas para esta cancha
-    fechas_reservadas = Reserva.objects.filter(
-        cancha=cancha,
-        estado__in=['pendiente', 'confirmada']
-    ).values_list('fecha', flat=True)
-    
     if request.method == 'POST':
         form = ReservaForm(request.POST)
         if form.is_valid():
@@ -88,31 +82,61 @@ def reservar_cancha(request, cancha_id):
             reserva.usuario = request.user
             reserva.cancha = cancha
             
-            # Verificar si ya existe una reserva para esa cancha en esa fecha
-            reserva_existente = Reserva.objects.filter(
+            # Verificar si hay conflicto de horarios
+            hora_inicio = int(reserva.hora_inicio.split(':')[0])
+            hora_fin = int(reserva.hora_fin.split(':')[0])
+            
+            # Manejar medianoche
+            if hora_fin == 0:
+                hora_fin = 24
+            
+            # Buscar reservas que se traslapen en ese día
+            reservas_dia = Reserva.objects.filter(
                 cancha=cancha,
                 fecha=reserva.fecha,
                 estado__in=['pendiente', 'confirmada']
-            ).exists()
+            )
             
-            if reserva_existente:
-                messages.error(request, 'Esta cancha ya está reservada para esa fecha.')
-                return render(request, 'canchas/reservar.html', {
-                    'form': form, 
-                    'cancha': cancha,
-                    'fechas_reservadas': list(fechas_reservadas)
-                })
+            conflicto = False
+            for r in reservas_dia:
+                r_inicio = int(r.hora_inicio.split(':')[0])
+                r_fin = int(r.hora_fin.split(':')[0])
+                
+                # Manejar medianoche
+                if r_fin == 0:
+                    r_fin = 24
+                
+                # Verificar si hay traslape de horarios
+                if not (hora_fin <= r_inicio or hora_inicio >= r_fin):
+                    conflicto = True
+                    # Formatear la hora para mostrar
+                    hora_fin_display = "12:00 AM" if r.hora_fin == "00:00" else r.hora_fin
+                    hora_inicio_display = r.hora_inicio
+                    messages.error(request, f'Hay un conflicto de horario. La cancha ya está reservada de {hora_inicio_display} a {hora_fin_display}.')
+                    break
             
-            reserva.save()
-            messages.success(request, '¡Reserva realizada con éxito!')
-            return redirect('mis_reservas')
+            if not conflicto:
+                reserva.save()
+                duracion = hora_fin - hora_inicio
+                messages.success(request, f'¡Reserva realizada con éxito! Has reservado {duracion} hora(s).')
+                return redirect('mis_reservas')
     else:
         form = ReservaForm()
+    
+    # Obtener solo reservas futuras (no mostrar las que ya pasaron)
+    from django.utils import timezone
+    hoy = timezone.now().date()
+    
+    reservas_existentes = Reserva.objects.filter(
+        cancha=cancha,
+        fecha__gte=hoy,  # Solo fechas >= hoy
+        estado__in=['pendiente', 'confirmada']
+    ).order_by('fecha', 'hora_inicio')
     
     return render(request, 'canchas/reservar.html', {
         'form': form, 
         'cancha': cancha,
-        'fechas_reservadas': list(fechas_reservadas)
+        'reservas_existentes': reservas_existentes
     })
 
 

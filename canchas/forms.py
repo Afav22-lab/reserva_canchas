@@ -25,15 +25,20 @@ class ReservaForm(forms.ModelForm):
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         label='Fecha de Reserva'
     )
-    notas = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-        required=False,
-        label='Notas adicionales'
+    hora_inicio = forms.ChoiceField(
+        choices=Reserva.HORARIOS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Hora de Inicio'
+    )
+    hora_fin = forms.ChoiceField(
+        choices=Reserva.HORARIOS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Hora de Finalización'
     )
 
     class Meta:
         model = Reserva
-        fields = ['fecha', 'notas']
+        fields = ['fecha', 'hora_inicio', 'hora_fin']
 
     def clean_fecha(self):
         fecha = self.cleaned_data['fecha']
@@ -41,3 +46,30 @@ class ReservaForm(forms.ModelForm):
         if fecha < date.today():
             raise forms.ValidationError('No puedes reservar en una fecha pasada.')
         return fecha
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        hora_inicio = cleaned_data.get('hora_inicio')
+        hora_fin = cleaned_data.get('hora_fin')
+        
+        if hora_inicio and hora_fin:
+            # Convertir a enteros para comparar (formato 24 horas)
+            inicio = int(hora_inicio.split(':')[0])
+            fin = int(hora_fin.split(':')[0])
+            
+            # Manejar el caso especial de medianoche (00:00)
+            if fin == 0:  # 12:00 AM = medianoche
+                fin = 24  # Tratarlo como 24 para cálculos
+            
+            # Si el horario es 8 AM a 12 AM, inicio debe ser >= 8 y fin puede ser hasta 24
+            if inicio < 8:
+                raise forms.ValidationError('El horario de inicio debe ser desde las 8:00 AM.')
+            
+            if fin <= inicio:
+                raise forms.ValidationError('La hora de finalización debe ser posterior a la hora de inicio.')
+            
+            duracion = fin - inicio
+            if duracion > 16:
+                raise forms.ValidationError('No puedes reservar más de 16 horas consecutivas.')
+        
+        return cleaned_data

@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="{% url 'admin:reserva_historial' %}" class="historylink" style="background: #417690; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none;">
+            📜 Ver Historial de Reservas Pasadas
+        </a>
+    </li>
+{% endblock %}

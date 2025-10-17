@@ -15,19 +15,32 @@
                     <p class="text-muted">{{ cancha.descripcion }}</p>
                 </div>
                 
-                {% if fechas_reservadas %}
-                <div class="alert alert-warning">
-                    <h6><i class="bi bi-exclamation-triangle"></i> Fechas ya reservadas:</h6>
-                    <ul class="mb-0">
-                        {% for fecha in fechas_reservadas %}
-                        <li>{{ fecha|date:"d/m/Y (l)" }}</li>
-                        {% endfor %}
-                    </ul>
-                    <small>No podrás reservar en estas fechas.</small>
+                {% if reservas_existentes %}
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-clock-history"></i> Horarios ya reservados:</h6>
+                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Horario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reserva in reservas_existentes %}
+                                <tr>
+                                    <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                                    <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <small>Verifica la disponibilidad antes de reservar.</small>
                 </div>
                 {% else %}
                 <div class="alert alert-success">
-                    <i class="bi bi-check-circle"></i> Esta cancha no tiene reservas activas. ¡Puedes reservar cualquier fecha!
+                    <i class="bi bi-check-circle"></i> Esta cancha no tiene reservas activas. ¡Todos los horarios están disponibles!
                 </div>
                 {% endif %}
                 
@@ -35,6 +48,12 @@
                 
                 <form method="post">
                     {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
                     
                     <div class="mb-3">
                         <label for="{{ form.fecha.id_for_label }}" class="form-label">
@@ -47,8 +66,26 @@
                         <small class="form-text text-muted">Selecciona la fecha en la que deseas reservar.</small>
                     </div>
                     
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> <strong>Nota:</strong> Tu reserva será confirmada automáticamente.
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
+                                <i class="bi bi-clock"></i> {{ form.hora_inicio.label }}
+                            </label>
+                            {{ form.hora_inicio }}
+                            {% if form.hora_inicio.errors %}
+                                <div class="text-danger">{{ form.hora_inicio.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.hora_fin.id_for_label }}" class="form-label">
+                                <i class="bi bi-clock-fill"></i> {{ form.hora_fin.label }}
+                            </label>
+                            {{ form.hora_fin }}
+                            {% if form.hora_fin.errors %}
+                                <div class="text-danger">{{ form.hora_fin.errors }}</div>
+                            {% endif %}
+                        </div>
                     </div>
                     
                     <div class="d-grid gap-2">

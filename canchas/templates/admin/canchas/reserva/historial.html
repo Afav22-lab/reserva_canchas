@@ -1,0 +1,75 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        {% if reservas %}
+        <div class="results">
+            <table id="result_list">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="text">Usuario</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Cancha</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Fecha</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Horario</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Duración</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Estado</div>
+                        </th>
+                        <th scope="col">
+                            <div class="text">Fecha de Reserva</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <td>{{ reserva.usuario.username }}</td>
+                        <td>{{ reserva.cancha.nombre }}</td>
+                        <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                        <td>
+                            <strong>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</strong>
+                        </td>
+                        <td>{{ reserva.duracion_horas }} hora(s)</td>
+                        <td>
+                            {% if reserva.estado == 'confirmada' %}
+                                <span style="color: green;">✓ Confirmada</span>
+                            {% elif reserva.estado == 'completada' %}
+                                <span style="color: blue;">✓ Completada</span>
+                            {% elif reserva.estado == 'cancelada' %}
+                                <span style="color: red;">✗ Cancelada</span>
+                            {% else %}
+                                <span style="color: orange;">⏱ Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 5px;">
+            No hay reservas pasadas en el historial.
+        </p>
+        {% endif %}
+        
+        <div style="margin: 20px 0;">
+            <a href="{% url 'admin:canchas_reserva_changelist' %}" class="button">
+                ← Volver a Reservas Actuales
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

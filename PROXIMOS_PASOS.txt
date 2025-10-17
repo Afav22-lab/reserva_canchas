@@ -30,7 +30,7 @@ Te pedirá:
 PASO 2: Iniciar el Servidor
 ──────────────────────────────────────────────
 Opción A - Fácil (Recomendado):
-   → Doble clic en el archivo "iniciar.bat"
+
 
 Opción B - Manual:
    → Abre terminal y ejecuta:
@@ -45,9 +45,6 @@ PASO 3: Crear Canchas (Como Administrador)
 2. Inicia sesión con el superusuario que creaste
 3. Haz clic en "Canchas" → "Agregar Cancha"
 4. Llena los campos:
-   - Nombre: Ej. "Cancha Fútbol 5"
-   - Descripción: Ej. "Cancha sintética con iluminación"
-   - Activa: ✓ (marca el checkbox)
 5. Haz clic en "Guardar"
 6. Crea varias canchas para probar el sistema
 
@@ -72,7 +69,6 @@ PASO 4: Probar el Sistema (Como Usuario)
 📄 INSTRUCCIONES.txt      → Guía rápida de uso
 📄 README.md              → Documentación completa
 📄 RESUMEN_PROYECTO.md    → Resumen detallado del proyecto
-📄 iniciar.bat            → Script para iniciar el servidor
 📄 requirements.txt       → Dependencias del proyecto
 
 
