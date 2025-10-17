@@ -13,6 +13,7 @@ class CanchaAdmin(admin.ModelAdmin):
     list_display = ['nombre', 'activa', 'fecha_creacion']
     list_filter = ['activa', 'fecha_creacion']
     search_fields = ['nombre', 'descripcion']
+    fields = ['nombre', 'descripcion', 'imagen', 'activa']
 
 
 @admin.register(Reserva)
@@ -65,13 +66,31 @@ class ReservaAdmin(admin.ModelAdmin):
     esta_vencida_icon.short_description = 'Estado Fecha'
     
     def archivar_vencidas(self, request, queryset):
-        """Acción para archivar reservas vencidas seleccionadas"""
+        """Acción para archivar reservas vencidas o canceladas"""
         hoy = timezone.now().date()
-        actualizadas = queryset.filter(
+        
+        # Archivar reservas vencidas (fechas pasadas)
+        vencidas = queryset.filter(
             fecha__lt=hoy,
             estado__in=['pendiente', 'confirmada']
         ).update(estado='completada')
         
-        self.message_user(request, f'{actualizadas} reservas archivadas.')
-    archivar_vencidas.short_description = 'Archivar reservas vencidas seleccionadas'
+        # Archivar reservas canceladas (cambiarlas a 'archivada')
+        canceladas = queryset.filter(
+            estado='cancelada'
+        ).update(estado='archivada')
+        
+        total = vencidas + canceladas
+        
+        if total > 0:
+            mensaje = []
+            if vencidas > 0:
+                mensaje.append(f'{vencidas} reserva(s) vencida(s)')
+            if canceladas > 0:
+                mensaje.append(f'{canceladas} reserva(s) cancelada(s)')
+            self.message_user(request, f'Archivadas: {" y ".join(mensaje)}.')
+        else:
+            self.message_user(request, 'No hay reservas para archivar en la selección.', level='warning')
+            
+    archivar_vencidas.short_description = 'Archivar reservas vencidas y canceladas'
 

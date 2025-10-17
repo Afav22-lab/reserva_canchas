@@ -10,34 +10,76 @@
                 <h4 class="mb-0"><i class="bi bi-calendar-plus"></i> Reservar Cancha</h4>
             </div>
             <div class="card-body">
+                <!-- Imagen de la cancha -->
+                {% if cancha.imagen %}
+                <div class="mb-4">
+                    <img src="{{ cancha.imagen.url }}" 
+                         class="img-fluid rounded shadow-sm" 
+                         alt="{{ cancha.nombre }}"
+                         style="max-height: 300px; width: 100%; object-fit: cover;">
+                </div>
+                {% endif %}
+                
                 <div class="mb-4">
                     <h5><i class="bi bi-trophy-fill text-success"></i> {{ cancha.nombre }}</h5>
                     <p class="text-muted">{{ cancha.descripcion }}</p>
                 </div>
                 
                 {% if reservas_existentes %}
-                <div class="alert alert-info">
-                    <h6><i class="bi bi-clock-history"></i> Horarios ya reservados:</h6>
-                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                        <table class="table table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Horario</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for reserva in reservas_existentes %}
-                                <tr>
-                                    <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
-                                    <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <!-- Filtro de búsqueda rápida -->
+                <div class="card mb-3 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-funnel"></i> Filtro Rápido de Disponibilidad</h6>
                     </div>
-                    <small>Verifica la disponibilidad antes de reservar.</small>
+                    <div class="card-body">
+                        <div class="row align-items-end">
+                            <div class="col-md-4 mb-2">
+                                <label for="filtroFecha" class="form-label">Fecha</label>
+                                <input type="date" id="filtroFecha" class="form-control" placeholder="Selecciona fecha">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label for="filtroHora" class="form-label">Hora de Inicio</label>
+                                <select id="filtroHora" class="form-control">
+                                    <option value="">Todas las horas</option>
+                                    <option value="08:00">08:00 AM</option>
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                    <option value="18:00">06:00 PM</option>
+                                    <option value="19:00">07:00 PM</option>
+                                    <option value="20:00">08:00 PM</option>
+                                    <option value="21:00">09:00 PM</option>
+                                    <option value="22:00">10:00 PM</option>
+                                    <option value="23:00">11:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button id="btnFiltrar" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i> Buscar Disponibilidad
+                                </button>
+                            </div>
+                        </div>
+                        <div id="resultadoFiltro" class="mt-3"></div>
+                    </div>
                 </div>
+                
+                <!-- Tabla oculta para que JavaScript pueda leer las reservas -->
+                <table class="d-none" id="tablaReservas">
+                    <tbody>
+                        {% for reserva in reservas_existentes %}
+                        <tr data-fecha="{{ reserva.fecha|date:'Y-m-d' }}" data-hora-inicio="{{ reserva.hora_inicio }}">
+                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 {% else %}
                 <div class="alert alert-success">
                     <i class="bi bi-check-circle"></i> Esta cancha no tiene reservas activas. ¡Todos los horarios están disponibles!
@@ -101,4 +143,78 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnFiltrar = document.getElementById('btnFiltrar');
+    const filtroFecha = document.getElementById('filtroFecha');
+    const filtroHora = document.getElementById('filtroHora');
+    const resultadoFiltro = document.getElementById('resultadoFiltro');
+    const tablaReservas = document.getElementById('tablaReservas');
+    
+    if (btnFiltrar) {
+        btnFiltrar.addEventListener('click', function() {
+            const fechaSeleccionada = filtroFecha.value;
+            const horaSeleccionada = filtroHora.value;
+            
+            if (!fechaSeleccionada) {
+                resultadoFiltro.innerHTML = '<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Por favor selecciona una fecha.</div>';
+                return;
+            }
+            
+            // Obtener todas las filas de la tabla
+            const filas = tablaReservas.querySelectorAll('tbody tr');
+            let reservasEncontradas = [];
+            
+            filas.forEach(function(fila) {
+                const fecha = fila.getAttribute('data-fecha');
+                const horaInicio = fila.getAttribute('data-hora-inicio');
+                
+                // Filtrar por fecha y opcionalmente por hora
+                if (fecha === fechaSeleccionada) {
+                    if (!horaSeleccionada || horaInicio === horaSeleccionada) {
+                        reservasEncontradas.push({
+                            fecha: fila.querySelector('td:nth-child(1)').textContent,
+                            horario: fila.querySelector('td:nth-child(2)').textContent
+                        });
+                    }
+                }
+            });
+            
+            // Mostrar resultados
+            if (reservasEncontradas.length > 0) {
+                let html = '<div class="alert alert-danger">';
+                html += '<h6><i class="bi bi-x-circle"></i> Horarios NO disponibles:</h6>';
+                html += '<ul class="mb-0">';
+                reservasEncontradas.forEach(function(reserva) {
+                    html += '<li>' + reserva.horario + '</li>';
+                });
+                html += '</ul>';
+                html += '</div>';
+                resultadoFiltro.innerHTML = html;
+            } else {
+                let mensaje = '<div class="alert alert-success">';
+                mensaje += '<h6><i class="bi bi-check-circle"></i> ¡Horario disponible!</h6>';
+                if (horaSeleccionada) {
+                    const horaFormateada = formatearHora(horaSeleccionada);
+                    mensaje += '<p class="mb-0">El horario desde las <strong>' + horaFormateada + '</strong> está disponible para la fecha seleccionada.</p>';
+                } else {
+                    mensaje += '<p class="mb-0">Todos los horarios están disponibles para la fecha seleccionada.</p>';
+                }
+                mensaje += '</div>';
+                resultadoFiltro.innerHTML = mensaje;
+            }
+        });
+    }
+    
+    // Función para formatear hora en formato 12 horas
+    function formatearHora(hora24) {
+        const [horas, minutos] = hora24.split(':');
+        const h = parseInt(horas);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return h12 + ':' + minutos + ' ' + ampm;
+    }
+});
+</script>
 {% endblock %}

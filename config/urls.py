@@ -17,11 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 # Ocultar el modelo Group (Grupos) del admin
-admin.site.unregister(Group)
+try:
+    admin.site.unregister(Group)
+except admin.sites.NotRegistered:
+    pass  # El modelo ya no está registrado
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('canchas.urls')),
 ]
+
+# Servir archivos multimedia en modo desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

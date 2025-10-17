@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils import timezone
+import pytz
 from .models import Reserva
 
 
@@ -49,6 +51,7 @@ class ReservaForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
+        fecha = cleaned_data.get('fecha')
         hora_inicio = cleaned_data.get('hora_inicio')
         hora_fin = cleaned_data.get('hora_fin')
         
@@ -71,5 +74,28 @@ class ReservaForm(forms.ModelForm):
             duracion = fin - inicio
             if duracion > 16:
                 raise forms.ValidationError('No puedes reservar más de 16 horas consecutivas.')
+        
+        # NUEVA VALIDACIÓN: Verificar que no se reserven horas que ya pasaron
+        if fecha and hora_fin:
+            # Obtener la hora actual en la zona horaria de Colombia
+            colombia_tz = pytz.timezone('America/Bogota')
+            ahora_colombia = timezone.now().astimezone(colombia_tz)
+            hoy = ahora_colombia.date()
+            hora_actual = ahora_colombia.hour
+            minuto_actual = ahora_colombia.minute
+            
+            # Si es HOY, verificar que la hora de fin no haya pasado
+            if fecha == hoy:
+                hora_fin_int = int(hora_fin.split(':')[0])
+                minuto_fin_int = int(hora_fin.split(':')[1])
+                
+                # Si la hora de fin ya pasó (excepto medianoche que es para mañana)
+                if hora_fin_int != 0:  # No validar si es medianoche (reserva hasta mañana)
+                    if hora_fin_int < hora_actual or (hora_fin_int == hora_actual and minuto_fin_int <= minuto_actual):
+                        raise forms.ValidationError(
+                            f'No puedes reservar en un horario que ya pasó. '
+                            f'La hora actual es {hora_actual:02d}:{minuto_actual:02d}. '
+                            f'Por favor selecciona un horario futuro.'
+                        )
         
         return cleaned_data

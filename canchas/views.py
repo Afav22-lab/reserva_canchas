@@ -3,11 +3,37 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils import timezone
 from .models import Cancha, Reserva
 from .forms import RegistroForm, ReservaForm
 
 
+def archivar_reservas_vencidas():
+    """
+    Función auxiliar para archivar automáticamente reservas vencidas.
+    Cambia el estado de 'pendiente' o 'confirmada' a 'completada' 
+    solo para las reservas cuya FECHA ya pasó (no por hora).
+    Las reservas del día actual se pueden ver hasta que termine el día.
+    """
+    import pytz
+    
+    # Obtener la fecha actual en la zona horaria de Colombia
+    colombia_tz = pytz.timezone('America/Bogota')
+    hoy = timezone.now().astimezone(colombia_tz).date()
+    
+    # Archivar solo reservas de fechas pasadas
+    actualizadas = Reserva.objects.filter(
+        fecha__lt=hoy,
+        estado__in=['pendiente', 'confirmada']
+    ).update(estado='completada')
+    
+    return actualizadas
+
+
 def home(request):
+    # Archivar automáticamente reservas vencidas
+    archivar_reservas_vencidas()
+    
     canchas = Cancha.objects.filter(activa=True)
     
     # Agregar información de reservas para cada cancha
@@ -59,6 +85,9 @@ def logout_view(request):
 
 @login_required
 def lista_canchas(request):
+    # Archivar automáticamente reservas vencidas
+    archivar_reservas_vencidas()
+    
     canchas = Cancha.objects.filter(activa=True)
     
     # Agregar información de reservas para cada cancha
@@ -73,6 +102,9 @@ def lista_canchas(request):
 
 @login_required
 def reservar_cancha(request, cancha_id):
+    # Archivar automáticamente reservas vencidas
+    archivar_reservas_vencidas()
+    
     cancha = get_object_or_404(Cancha, id=cancha_id, activa=True)
     
     if request.method == 'POST':
@@ -142,15 +174,8 @@ def reservar_cancha(request, cancha_id):
 
 @login_required
 def mis_reservas(request):
-    # Archivar automáticamente reservas vencidas del usuario actual
-    from django.utils import timezone
-    hoy = timezone.now().date()
-    
-    Reserva.objects.filter(
-        usuario=request.user,
-        fecha__lt=hoy,
-        estado__in=['pendiente', 'confirmada']
-    ).update(estado='completada')
+    # Archivar automáticamente reservas vencidas
+    archivar_reservas_vencidas()
     
     # Obtener todas las reservas del usuario
     reservas = Reserva.objects.filter(usuario=request.user)
@@ -159,12 +184,14 @@ def mis_reservas(request):
     reservas_activas = reservas.filter(estado__in=['pendiente', 'confirmada'])
     reservas_completadas = reservas.filter(estado='completada')
     reservas_canceladas = reservas.filter(estado='cancelada')
+    reservas_archivadas = reservas.filter(estado='archivada')
     
     context = {
         'reservas': reservas,
         'reservas_activas': reservas_activas,
         'reservas_completadas': reservas_completadas,
         'reservas_canceladas': reservas_canceladas,
+        'reservas_archivadas': reservas_archivadas,
     }
     
     return render(request, 'canchas/mis_reservas.html', context)

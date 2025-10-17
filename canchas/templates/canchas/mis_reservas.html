@@ -19,14 +19,20 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="completadas-tab" data-bs-toggle="tab" data-bs-target="#completadas" type="button" role="tab">
-            <i class="bi bi-archive"></i> Completadas 
-            <span class="badge bg-secondary">{{ reservas_completadas.count }}</span>
+            <i class="bi bi-check-circle"></i> Completadas 
+            <span class="badge bg-info">{{ reservas_completadas.count }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="canceladas-tab" data-bs-toggle="tab" data-bs-target="#canceladas" type="button" role="tab">
             <i class="bi bi-x-circle"></i> Canceladas 
-            <span class="badge bg-danger">{{ reservas_canceladas.count }}</span>
+            <span class="badge bg-warning">{{ reservas_canceladas.count }}</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="archivadas-tab" data-bs-toggle="tab" data-bs-target="#archivadas" type="button" role="tab">
+            <i class="bi bi-archive"></i> Archivadas 
+            <span class="badge bg-secondary">{{ reservas_archivadas.count }}</span>
         </button>
     </li>
 </ul>
@@ -79,8 +85,7 @@
             </div>
         {% else %}
             <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> No tienes reservas activas. 
-                <a href="{% url 'lista_canchas' %}" class="alert-link">¡Haz tu primera reserva!</a>
+                <i class="bi bi-info-circle"></i> No tienes reservas activas.
             </div>
         {% endif %}
     </div>
@@ -145,6 +150,44 @@
         {% else %}
             <div class="alert alert-secondary">
                 <i class="bi bi-x-circle"></i> No tienes reservas canceladas.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Reservas Archivadas -->
+    <div class="tab-pane fade" id="archivadas" role="tabpanel">
+        {% if reservas_archivadas %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Cancha</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Duración</th>
+                            <th>Estado Original</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas_archivadas %}
+                        <tr>
+                            <td><i class="bi bi-trophy-fill text-muted"></i> {{ reserva.cancha.nombre }}</td>
+                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ reserva.hora_inicio }} - {{ reserva.hora_fin }}
+                                </span>
+                            </td>
+                            <td>{{ reserva.duracion_horas }} hora(s)</td>
+                            <td><span class="badge bg-secondary">Archivada</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                <i class="bi bi-archive"></i> No tienes reservas archivadas.
             </div>
         {% endif %}
     </div>

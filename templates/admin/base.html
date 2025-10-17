@@ -11,6 +11,16 @@
         width: 100% !important;
         margin-right: 0 !important;
     }
+    
+    /* Ocultar el filtro de búsqueda en el panel admin */
+    #searchbar {
+        display: none !important;
+    }
+    
+    /* Ocultar el campo de filtro */
+    .module.filtered h2 {
+        display: none !important;
+    }
 </style>
 
 <script>
@@ -20,6 +30,12 @@
             const sidebar = document.getElementById('content-related');
             if (sidebar) {
                 sidebar.remove();
+            }
+            
+            // Eliminar el filtro de búsqueda
+            const searchbar = document.getElementById('searchbar');
+            if (searchbar) {
+                searchbar.remove();
             }
             
             // Asegurar que el contenido principal use todo el ancho

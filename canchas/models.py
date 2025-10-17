@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Cancha(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
+    imagen = models.ImageField(upload_to='canchas/', blank=True, null=True, verbose_name='Imagen')
     activa = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
@@ -22,6 +23,7 @@ class Reserva(models.Model):
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
         ('completada', 'Completada'),
+        ('archivada', 'Archivada'),
     ]
     
     HORARIOS_CHOICES = [
