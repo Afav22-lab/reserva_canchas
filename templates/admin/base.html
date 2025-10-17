@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Ocultar completamente la sección de Acciones recientes */
+    #content-related {
+        display: none !important;
+    }
+    
+    /* Expandir el contenido principal para usar todo el ancho */
+    #content-main {
+        width: 100% !important;
+        margin-right: 0 !important;
+    }
+    
+    .colMS {
+        margin-right: 0 !important;
+    }
+</style>
+
+<script>
+    // Eliminar físicamente el sidebar cuando cargue cualquier página del admin
+    (function() {
+        function removeSidebar() {
+            const sidebar = document.getElementById('content-related');
+            if (sidebar) {
+                sidebar.remove();
+            }
+            
+            // Asegurar que el contenido principal use todo el ancho
+            const mainContent = document.getElementById('content-main');
+            if (mainContent) {
+                mainContent.style.width = '100%';
+                mainContent.style.marginRight = '0';
+            }
+        }
+        
+        // Ejecutar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', removeSidebar);
+        } else {
+            removeSidebar();
+        }
+        
+        // También ejecutar después de un pequeño delay por si acaso
+        setTimeout(removeSidebar, 100);
+    })();
+</script>
+{% endblock %}
