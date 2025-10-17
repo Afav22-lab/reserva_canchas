@@ -9,21 +9,55 @@
     #content-related,
     .module#recent-actions-module,
     div[id*="recent"],
-    aside[class*="recent"] {
+    aside[class*="recent"],
+    #recent-actions-module {
         display: none !important;
         visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
     
     /* Expandir el contenido principal */
     #content-main {
         width: 100% !important;
         float: none !important;
+        margin-right: 0 !important;
     }
     
     #content {
         width: 100% !important;
     }
+    
+    /* Forzar que el contenedor principal use todo el ancho */
+    .colMS {
+        margin-right: 0 !important;
+    }
 </style>
+
+<script>
+    // JavaScript para eliminar completamente el sidebar cuando cargue la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Buscar y eliminar todos los elementos relacionados con "recent actions"
+        const sidebar = document.getElementById('content-related');
+        if (sidebar) {
+            sidebar.remove();
+        }
+        
+        // Buscar por otras variantes posibles
+        const recentModules = document.querySelectorAll('[id*="recent"], [class*="recent"]');
+        recentModules.forEach(function(element) {
+            element.remove();
+        });
+        
+        // Asegurar que el contenido principal use todo el ancho
+        const mainContent = document.getElementById('content-main');
+        if (mainContent) {
+            mainContent.style.width = '100%';
+            mainContent.style.marginRight = '0';
+        }
+    });
+</script>
 {% endblock %}
 
 {% block sidebar %}
