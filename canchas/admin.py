@@ -11,7 +11,7 @@ from .models import Cancha, Reserva
 @admin.register(Cancha)
 class CanchaAdmin(admin.ModelAdmin):
     list_display = ['nombre', 'precio_formateado', 'activa', 'fecha_creacion']
-    list_filter = ['activa', 'fecha_creacion']
+    # list_filter = ['activa', 'fecha_creacion']  # Desactivado - innecesario para pocas canchas
     search_fields = ['nombre', 'descripcion']
     fields = ['nombre', 'descripcion', 'imagen', 'precio_por_hora', 'activa']
     

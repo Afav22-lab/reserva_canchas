@@ -1,4 +1,5 @@
 {% extends 'canchas/base.html' %}
+{% load custom_filters %}
 
 {% block title %}Reservar {{ cancha.nombre }}{% endblock %}
 
@@ -30,7 +31,7 @@
                             <i class="bi bi-currency-dollar"></i> <strong>Precio por hora:</strong>
                         </div>
                         <div>
-                            <h4 class="mb-0 text-success">${{ cancha.precio_por_hora|floatformat:0|stringformat:"d" }} COP</h4>
+                            <h4 class="mb-0 text-success">${{ cancha.precio_por_hora|formato_precio }} COP</h4>
                         </div>
                     </div>
                 </div>
