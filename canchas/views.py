@@ -12,22 +12,42 @@ def archivar_reservas_vencidas():
     """
     Función auxiliar para archivar automáticamente reservas vencidas.
     Cambia el estado de 'pendiente' o 'confirmada' a 'completada' 
-    solo para las reservas cuya FECHA ya pasó (no por hora).
-    Las reservas del día actual se pueden ver hasta que termine el día.
+    para las reservas cuya hora de finalización ya pasó.
     """
     import pytz
+    from datetime import datetime, timedelta
     
-    # Obtener la fecha actual en la zona horaria de Colombia
+    # Obtener la fecha y hora actual en la zona horaria de Colombia
     colombia_tz = pytz.timezone('America/Bogota')
-    hoy = timezone.now().astimezone(colombia_tz).date()
+    ahora = timezone.now().astimezone(colombia_tz)
+    fecha_actual = ahora.date()
+    hora_actual = ahora.time()
     
-    # Archivar solo reservas de fechas pasadas
-    actualizadas = Reserva.objects.filter(
-        fecha__lt=hoy,
+    # Archivar reservas de fechas pasadas (todas del día completo)
+    actualizadas_fecha = Reserva.objects.filter(
+        fecha__lt=fecha_actual,
         estado__in=['pendiente', 'confirmada']
     ).update(estado='completada')
     
-    return actualizadas
+    # Archivar reservas del día actual cuya hora de fin ya pasó
+    reservas_hoy = Reserva.objects.filter(
+        fecha=fecha_actual,
+        estado__in=['pendiente', 'confirmada']
+    )
+    
+    actualizadas_hora = 0
+    for reserva in reservas_hoy:
+        # Convertir hora_fin a objeto time para comparar
+        hora_fin_str = reserva.hora_fin
+        hora_fin = datetime.strptime(hora_fin_str, '%H:%M').time()
+        
+        # Si la hora de fin ya pasó, marcar como completada
+        if hora_fin < hora_actual:
+            reserva.estado = 'completada'
+            reserva.save()
+            actualizadas_hora += 1
+    
+    return actualizadas_fecha + actualizadas_hora
 
 
 def home(request):

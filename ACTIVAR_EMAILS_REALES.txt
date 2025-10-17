@@ -1,0 +1,116 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║              RESUMEN: ACTIVAR EMAILS REALES                   ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 OPCIÓN 1: Configuración Rápida (Directa en settings.py)
+════════════════════════════════════════════════════════════════
+
+1. Ve a Google y genera una contraseña de aplicación:
+   🔗 https://myaccount.google.com/apppasswords
+   
+2. Abre: config/settings.py
+
+3. Busca esta línea (aprox línea 132):
+   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+   
+4. COMÉNTALA (agrega # al inicio):
+   # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+5. DESCOMENTA estas líneas (quita los #):
+   EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+   EMAIL_HOST = 'smtp.gmail.com'
+   EMAIL_PORT = 587
+   EMAIL_USE_TLS = True
+   EMAIL_HOST_USER = 'tu-email@gmail.com'  # ← Cambia esto
+   EMAIL_HOST_PASSWORD = 'xxxx xxxx xxxx xxxx'  # ← Cambia esto
+   DEFAULT_FROM_EMAIL = 'Sistema de Reservas <tu-email@gmail.com>'
+
+6. Guarda y reinicia el servidor
+
+✅ LISTO - Emails reales funcionando
+
+
+════════════════════════════════════════════════════════════════
+🔒 OPCIÓN 2: Configuración Segura (Con variables de entorno)
+════════════════════════════════════════════════════════════════
+
+1. Instala python-decouple:
+   pip install python-decouple
+
+2. Crea archivo .env en la raíz del proyecto:
+   EMAIL_HOST_USER=tu-email@gmail.com
+   EMAIL_HOST_PASSWORD=tu-contraseña-aplicacion
+
+3. Modifica config/settings.py:
+   
+   # Al inicio del archivo, agrega:
+   from decouple import config
+   
+   # En la sección de email, cambia:
+   EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+   EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+4. Guarda y reinicia el servidor
+
+✅ LISTO - Emails reales + Seguridad
+
+
+════════════════════════════════════════════════════════════════
+📝 CÓDIGO EXACTO PARA settings.py
+════════════════════════════════════════════════════════════════
+
+ANTES (Modo simulación):
+───────────────────────
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+DESPUÉS (Modo real):
+────────────────────
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Comentada
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'reservas.canchas@gmail.com'  # Tu email aquí
+EMAIL_HOST_PASSWORD = 'abcdefghijklmnop'  # Tu contraseña de app aquí (16 chars)
+DEFAULT_FROM_EMAIL = 'Sistema de Reservas <reservas.canchas@gmail.com>'
+
+
+════════════════════════════════════════════════════════════════
+🧪 PROBAR
+════════════════════════════════════════════════════════════════
+
+1. Reinicia el servidor:
+   python manage.py runserver
+
+2. Ve a: http://127.0.0.1:8000/login/
+
+3. Click "¿Olvidaste tu contraseña?"
+
+4. Ingresa un email registrado
+
+5. ¡Revisa tu bandeja de entrada! 📬
+
+
+════════════════════════════════════════════════════════════════
+❓ ¿TIENES LA CONTRASEÑA DE APLICACIÓN?
+════════════════════════════════════════════════════════════════
+
+SI → Ve directo al Paso 2 de settings.py
+NO → Lee el archivo: PASOS_CONFIGURAR_GMAIL.txt
+
+
+════════════════════════════════════════════════════════════════
+⚡ CAMBIO RÁPIDO: Solo 1 Línea
+════════════════════════════════════════════════════════════════
+
+Si quieres volver a modo simulación rápidamente:
+
+COMENTA todas las líneas de Gmail y DESCOMENTA:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+════════════════════════════════════════════════════════════════

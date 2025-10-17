@@ -23,6 +23,12 @@
                         <input type="password" name="password" class="form-control" id="{{ form.password.id_for_label }}" required>
                     </div>
                     
+                    <div class="mb-3 text-end">
+                        <a href="{% url 'password_reset' %}" class="text-decoration-none text-muted small">
+                            <i class="bi bi-question-circle"></i> ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+                    
                     {% if form.errors %}
                         <div class="alert alert-danger">
                             Por favor corrige los errores.
