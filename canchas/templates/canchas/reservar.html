@@ -23,6 +23,16 @@
                 <div class="mb-4">
                     <h5><i class="bi bi-trophy-fill text-success"></i> {{ cancha.nombre }}</h5>
                     <p class="text-muted">{{ cancha.descripcion }}</p>
+                    
+                    <!-- Precio por hora -->
+                    <div class="alert alert-info d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-currency-dollar"></i> <strong>Precio por hora:</strong>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 text-success">${{ cancha.precio_por_hora|floatformat:0|stringformat:"d" }} COP</h4>
+                        </div>
+                    </div>
                 </div>
                 
                 {% if reservas_existentes %}
@@ -130,6 +140,20 @@
                         </div>
                     </div>
                     
+                    <!-- Cálculo de Costo Total -->
+                    <div id="costoTotal" class="alert alert-success d-none mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-hourglass-split"></i> Duración:</strong>
+                                <span id="duracionHoras">0</span> hora(s)
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <strong><i class="bi bi-cash-coin"></i> Costo Total:</strong>
+                                <h4 class="mb-0 text-success d-inline ms-2" id="costoTotalValor">$0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-success btn-lg">
                             <i class="bi bi-check-circle"></i> Confirmar Reserva
@@ -214,6 +238,55 @@ document.addEventListener('DOMContentLoaded', function() {
         const ampm = h >= 12 ? 'PM' : 'AM';
         const h12 = h % 12 || 12;
         return h12 + ':' + minutos + ' ' + ampm;
+    }
+    
+    // ===== CALCULADORA DE COSTO TOTAL =====
+    const horaInicio = document.getElementById('{{ form.hora_inicio.id_for_label }}');
+    const horaFin = document.getElementById('{{ form.hora_fin.id_for_label }}');
+    const costoTotalDiv = document.getElementById('costoTotal');
+    const duracionSpan = document.getElementById('duracionHoras');
+    const costoTotalSpan = document.getElementById('costoTotalValor');
+    const precioPorHora = {{ cancha.precio_por_hora }};
+    
+    function calcularCosto() {
+        const inicio = horaInicio.value;
+        const fin = horaFin.value;
+        
+        if (inicio && fin) {
+            // Convertir horas a números
+            let horaInicioNum = parseInt(inicio.split(':')[0]);
+            let horaFinNum = parseInt(fin.split(':')[0]);
+            
+            // Manejar el caso de medianoche (00:00)
+            if (horaFinNum === 0) {
+                horaFinNum = 24;
+            }
+            
+            // Calcular duración
+            const duracion = horaFinNum - horaInicioNum;
+            
+            if (duracion > 0) {
+                const costoTotal = duracion * precioPorHora;
+                
+                // Actualizar la interfaz
+                duracionSpan.textContent = duracion;
+                costoTotalSpan.textContent = '$' + costoTotal.toLocaleString('es-CO');
+                costoTotalDiv.classList.remove('d-none');
+            } else {
+                costoTotalDiv.classList.add('d-none');
+            }
+        } else {
+            costoTotalDiv.classList.add('d-none');
+        }
+    }
+    
+    // Escuchar cambios en los selects
+    if (horaInicio && horaFin) {
+        horaInicio.addEventListener('change', calcularCosto);
+        horaFin.addEventListener('change', calcularCosto);
+        
+        // Calcular al cargar si ya hay valores seleccionados
+        calcularCosto();
     }
 });
 </script>

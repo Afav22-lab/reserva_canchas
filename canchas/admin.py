@@ -10,19 +10,34 @@ from .models import Cancha, Reserva
 
 @admin.register(Cancha)
 class CanchaAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'activa', 'fecha_creacion']
+    list_display = ['nombre', 'precio_formateado', 'activa', 'fecha_creacion']
     list_filter = ['activa', 'fecha_creacion']
     search_fields = ['nombre', 'descripcion']
-    fields = ['nombre', 'descripcion', 'imagen', 'activa']
+    fields = ['nombre', 'descripcion', 'imagen', 'precio_por_hora', 'activa']
+    
+    def precio_formateado(self, obj):
+        """Muestra el precio formateado con separador de miles"""
+        return f"${obj.precio_por_hora:,.0f}".replace(',', '.')
+    precio_formateado.short_description = 'Precio/Hora'
 
 
 @admin.register(Reserva)
 class ReservaAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'cancha', 'fecha', 'hora_inicio', 'hora_fin', 'estado', 'fecha_reserva', 'esta_vencida_icon']
+    list_display = ['usuario', 'cancha', 'fecha', 'hora_inicio', 'hora_fin', 'duracion', 'costo', 'estado', 'fecha_reserva', 'esta_vencida_icon']
     list_filter = ['estado', 'fecha', 'cancha']
     search_fields = ['usuario__username', 'cancha__nombre']
     date_hierarchy = 'fecha'
     actions = ['archivar_vencidas']
+    
+    def duracion(self, obj):
+        """Muestra la duración en horas"""
+        return f"{obj.duracion_horas}h"
+    duracion.short_description = 'Duración'
+    
+    def costo(self, obj):
+        """Muestra el costo total formateado"""
+        return obj.costo_total_formateado
+    costo.short_description = 'Costo Total'
     
     def changelist_view(self, request, extra_context=None):
         """Personalizar la vista principal del admin para agregar botón de historial"""

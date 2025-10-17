@@ -32,6 +32,16 @@
                         <i class="bi bi-trophy-fill text-success"></i> {{ cancha.nombre }}
                     </h5>
                     <p class="card-text text-muted">{{ cancha.descripcion }}</p>
+                    
+                    <!-- Precio por hora -->
+                    <div class="mb-3">
+                        <h4 class="text-success mb-0">
+                            <i class="bi bi-currency-dollar"></i> 
+                            ${{ cancha.precio_por_hora|floatformat:0|stringformat:"d" }}
+                        </h4>
+                        <small class="text-muted">por hora</small>
+                    </div>
+                    
                     {% if cancha.num_reservas_activas > 0 %}
                     <div class="badge bg-warning text-dark">
                         <i class="bi bi-calendar-check"></i> {{ cancha.num_reservas_activas }} reserva{{ cancha.num_reservas_activas|pluralize }}

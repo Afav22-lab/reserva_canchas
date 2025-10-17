@@ -6,6 +6,7 @@ class Cancha(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     imagen = models.ImageField(upload_to='canchas/', blank=True, null=True, verbose_name='Imagen')
+    precio_por_hora = models.DecimalField(max_digits=10, decimal_places=2, default=50000, verbose_name='Precio por Hora (COP)')
     activa = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
@@ -69,6 +70,17 @@ class Reserva(models.Model):
             hora_fin = 24
         
         return hora_fin - hora_inicio
+
+    @property
+    def costo_total(self):
+        """Calcula el costo total de la reserva"""
+        return self.cancha.precio_por_hora * self.duracion_horas
+    
+    @property
+    def costo_total_formateado(self):
+        """Retorna el costo total formateado con separador de miles"""
+        total = self.costo_total
+        return f"${total:,.0f}".replace(',', '.')
 
     @property
     def esta_vencida(self):

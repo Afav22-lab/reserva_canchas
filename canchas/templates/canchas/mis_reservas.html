@@ -43,6 +43,7 @@
                             <th><i class="bi bi-calendar-event"></i> Fecha</th>
                             <th><i class="bi bi-clock"></i> Horario</th>
                             <th><i class="bi bi-hourglass"></i> Duración</th>
+                            <th><i class="bi bi-cash-coin"></i> Costo</th>
                             <th><i class="bi bi-info-circle"></i> Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -54,6 +55,7 @@
                             <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
                             <td><span class="badge bg-primary">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span></td>
                             <td>{{ reserva.duracion_horas }} hora(s)</td>
+                            <td><strong class="text-success">{{ reserva.costo_total_formateado }}</strong></td>
                             <td>
                                 {% if reserva.estado == 'confirmada' %}
                                     <span class="badge bg-success">
@@ -95,6 +97,7 @@
                             <th><i class="bi bi-calendar-event"></i> Fecha</th>
                             <th><i class="bi bi-clock"></i> Horario</th>
                             <th><i class="bi bi-hourglass"></i> Duración</th>
+                            <th><i class="bi bi-cash-coin"></i> Costo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,6 +107,7 @@
                             <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
                             <td><span class="badge bg-secondary">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span></td>
                             <td>{{ reserva.duracion_horas }} hora(s)</td>
+                            <td><strong>{{ reserva.costo_total_formateado }}</strong></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -127,6 +131,7 @@
                             <th><i class="bi bi-calendar-event"></i> Fecha</th>
                             <th><i class="bi bi-clock"></i> Horario</th>
                             <th><i class="bi bi-hourglass"></i> Duración</th>
+                            <th><i class="bi bi-cash-coin"></i> Costo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,6 +141,7 @@
                             <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
                             <td><span class="badge bg-danger">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span></td>
                             <td>{{ reserva.duracion_horas }} hora(s)</td>
+                            <td><strong>{{ reserva.costo_total_formateado }}</strong></td>
                         </tr>
                         {% endfor %}
                     </tbody>
