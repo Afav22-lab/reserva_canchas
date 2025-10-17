@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.utils import timezone
 from .models import Cancha, Reserva
 
-# Deshabilitar "Mis acciones" en todo el admin
-admin.site.disable_action('delete_selected')
+
+
 
 
 @admin.register(Cancha)
@@ -74,3 +74,4 @@ class ReservaAdmin(admin.ModelAdmin):
         
         self.message_user(request, f'{actualizadas} reservas archivadas.')
     archivar_vencidas.short_description = 'Archivar reservas vencidas seleccionadas'
+
