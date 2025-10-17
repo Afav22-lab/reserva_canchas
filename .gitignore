@@ -1,0 +1,40 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Entorno virtual
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+*.bak
+
+# Archivos de configuración local
+local_settings.py
+.env
+
+# Migraciones (opcional - descomenta si no quieres subir migraciones)
+# */migrations/*.py
+# !*/migrations/__init__.py

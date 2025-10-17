@@ -1,0 +1,134 @@
+/* Estilos personalizados para el sistema de reserva de canchas */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Imagen de césped HD - más confiable que GIF */
+    background: url('https://images.unsplash.com/photo-1529779542327-e5c7c7a0b990?w=1920&h=1080&fit=crop') center/cover fixed;
+}
+
+/* Overlay verde SUAVE para mejor legibilidad */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 126, 52, 0.3);
+    pointer-events: none;
+    z-index: -1;
+}
+
+main {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Hero Section */
+.hero-section {
+    background-size: cover !important;
+    background-position: center !important;
+    transition: transform 0.3s ease;
+}
+
+.jumbotron {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    color: white;
+}
+
+/* Cards con efecto hover mejorado */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.hover-card {
+    border: none;
+    border-radius: 12px;
+}
+
+.hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.hover-card img {
+    transition: transform 0.3s ease;
+}
+
+.hover-card:hover img {
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    border-radius: 12px 12px 0 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.btn {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    font-size: 0.9em;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .alert {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .jumbotron h1 {
+        font-size: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}

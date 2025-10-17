@@ -1,0 +1,154 @@
+{% extends 'canchas/base.html' %}
+
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-calendar-check"></i> Mis Reservas</h2>
+    </div>
+</div>
+
+<!-- Pestañas para filtrar reservas -->
+<ul class="nav nav-tabs mb-4" id="reservasTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="activas-tab" data-bs-toggle="tab" data-bs-target="#activas" type="button" role="tab">
+            <i class="bi bi-calendar-check"></i> Activas 
+            <span class="badge bg-success">{{ reservas_activas.count }}</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="completadas-tab" data-bs-toggle="tab" data-bs-target="#completadas" type="button" role="tab">
+            <i class="bi bi-archive"></i> Completadas 
+            <span class="badge bg-secondary">{{ reservas_completadas.count }}</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="canceladas-tab" data-bs-toggle="tab" data-bs-target="#canceladas" type="button" role="tab">
+            <i class="bi bi-x-circle"></i> Canceladas 
+            <span class="badge bg-danger">{{ reservas_canceladas.count }}</span>
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="reservasTabsContent">
+    <!-- Reservas Activas -->
+    <div class="tab-pane fade show active" id="activas" role="tabpanel">
+        {% if reservas_activas %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-success">
+                        <tr>
+                            <th><i class="bi bi-trophy"></i> Cancha</th>
+                            <th><i class="bi bi-calendar-event"></i> Fecha</th>
+                            <th><i class="bi bi-clock"></i> Fecha de Reserva</th>
+                            <th><i class="bi bi-info-circle"></i> Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas_activas %}
+                        <tr>
+                            <td><strong>{{ reserva.cancha.nombre }}</strong></td>
+                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <td>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if reserva.estado == 'confirmada' %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Confirmada
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-clock"></i> Pendiente
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'cancelar_reserva' reserva.id %}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('¿Estás seguro de cancelar esta reserva?')">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No tienes reservas activas. 
+                <a href="{% url 'lista_canchas' %}" class="alert-link">¡Haz tu primera reserva!</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Reservas Completadas -->
+    <div class="tab-pane fade" id="completadas" role="tabpanel">
+        {% if reservas_completadas %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th><i class="bi bi-trophy"></i> Cancha</th>
+                            <th><i class="bi bi-calendar-event"></i> Fecha</th>
+                            <th><i class="bi bi-clock"></i> Fecha de Reserva</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas_completadas %}
+                        <tr class="text-muted">
+                            <td>{{ reserva.cancha.nombre }}</td>
+                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <td>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                <i class="bi bi-archive"></i> No tienes reservas completadas aún.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Reservas Canceladas -->
+    <div class="tab-pane fade" id="canceladas" role="tabpanel">
+        {% if reservas_canceladas %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-danger">
+                        <tr>
+                            <th><i class="bi bi-trophy"></i> Cancha</th>
+                            <th><i class="bi bi-calendar-event"></i> Fecha</th>
+                            <th><i class="bi bi-clock"></i> Fecha de Reserva</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas_canceladas %}
+                        <tr class="text-muted">
+                            <td>{{ reserva.cancha.nombre }}</td>
+                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <td>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                <i class="bi bi-x-circle"></i> No tienes reservas canceladas.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'lista_canchas' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nueva Reserva
+        </a>
+    </div>
+</div>
+{% endblock %}
