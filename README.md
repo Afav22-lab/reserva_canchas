@@ -2,30 +2,29 @@
 
 Sistema web completo desarrollado en Django para la gestión y reserva de canchas deportivas con sistema de horarios.
 
-## 🎯 Características Principales
 
 ### Para Usuarios:
-- ✅ Sistema de autenticación (Login/Registro)
-- ✅ Visualización de canchas disponibles con imágenes profesionales
-- ✅ **Sistema de reservas por horarios (8:00 AM - 12:00 AM)**
-- ✅ Selección de múltiples horas consecutivas (1-16 horas)
-- ✅ Detección automática de conflictos de horarios
-- ✅ Visualización de reservas propias organizadas por estado
-- ✅ Cancelación de reservas
-- ✅ Solo visualiza reservas futuras (no historial)
-- ✅ Interfaz moderna y responsive con Bootstrap 5
-- ✅ Fondo animado con GIF de fútbol
+- Sistema de autenticación (Login/Registro)
+- Visualización de canchas disponibles con imágenes profesionales
+- **Sistema de reservas por horarios (8:00 AM - 12:00 AM)**
+- Selección de múltiples horas consecutivas (1-16 horas)
+- Detección automática de conflictos de horarios
+- Visualización de reservas propias organizadas por estado
+- Cancelación de reservas
+- Solo visualiza reservas futuras (no historial)
+- Interfaz moderna y responsive con Bootstrap 5
+- Fondo animado con GIF de fútbol
 
 ### Para Administradores:
-- ✅ Panel de administración completo
-- ✅ Gestión de canchas y reservas
-- ✅ **Historial de reservas pasadas**
-- ✅ Acción para archivar reservas vencidas
-- ✅ Visualización de horarios y duración de reservas
-- ✅ Panel simplificado (sin grupos, sin acciones recientes)
-- ✅ Sistema de estados: Pendiente, Confirmada, Cancelada, Completada
+- Panel de administración completo
+- Gestión de canchas y reservas
+- **Historial de reservas pasadas**
+- Acción para archivar reservas vencidas
+- Visualización de horarios y duración de reservas
+- Panel simplificado (sin grupos, sin acciones recientes)
+- Sistema de estados: Pendiente, Confirmada, Cancelada, Completada
 
-## 📋 Requisitos
+##  Requisitos
 
 - Python 3.8 o superior
 - Django 5.2.7
@@ -41,10 +40,6 @@ Sistema web completo desarrollado en Django para la gestión y reserva de cancha
 .\venv\Scripts\activate
 ```
 
-**Linux/Mac:**
-```bash
-source venv/bin/activate
-```
 
 ### 2. Instalar dependencias
 
@@ -75,7 +70,7 @@ python manage.py runserver
 
 El sistema estará disponible en: http://127.0.0.1:8000/
 
-## 🚀 Uso del Sistema
+##  Uso del Sistema
 
 ### Para Administradores
 
@@ -109,7 +104,7 @@ El sistema estará disponible en: http://127.0.0.1:8000/
    - **Canceladas:** Reservas que cancelaste
 6. **Cancela reservas** si es necesario
 
-## ⏰ Sistema de Horarios
+##  Sistema de Horarios
 
 ### Horarios Disponibles
 - **Inicio:** 8:00 AM - 11:00 PM
@@ -117,13 +112,13 @@ El sistema estará disponible en: http://127.0.0.1:8000/
 - **Duración:** 1 a 16 horas consecutivas
 
 ### Validaciones Automáticas
-- ✅ No permite fechas pasadas
-- ✅ Detecta conflictos de horarios
-- ✅ Valida que hora fin > hora inicio
-- ✅ Limita duración máxima
-- ✅ Solo muestra reservas futuras a usuarios
+- No permite fechas pasadas
+- Detecta conflictos de horarios
+- Valida que hora fin > hora inicio
+- Limita duración máxima
+- Solo muestra reservas futuras a usuarios
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 reserva_canchas/
@@ -164,7 +159,7 @@ reserva_canchas/
         └── styles.css       # Estilos personalizados + GIF de fondo
 ```
 
-## 📊 Modelos de Datos
+## Modelos de Datos
 
 ### Cancha
 - **nombre**: CharField - Nombre de la cancha
@@ -192,7 +187,7 @@ reserva_canchas/
 - ✅ No pueden existir reservas con horarios superpuestos para la misma cancha
 - ✅ Manejo especial de medianoche (00:00)
 
-## 🎨 Diseño y Estética
+## Diseño y Estética
 
 - **Imágenes profesionales:** Unsplash CDN (1200x600 para hero, 400x250 para cards)
 - **Fondo animado:** GIF de futbolistas (Giphy CDN)
@@ -200,7 +195,7 @@ reserva_canchas/
 - **Estilo:** Tarjetas con sombras, gradientes, diseño moderno y responsivo
 - **Paleta de colores:** Verde profesional con acentos en badges de estado
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Backend:** Django 5.2.7
 - **Frontend:** HTML5, CSS3, Bootstrap 5.3.0, Bootstrap Icons
@@ -208,7 +203,7 @@ reserva_canchas/
 - **CDN:** Unsplash (imágenes), Giphy (GIF de fondo)
 - **Control de versiones:** Git + GitHub
 
-## 🐛 Solución de Problemas
+## Solución de Problemas
 
 ### El servidor no inicia
 ```cmd
@@ -238,11 +233,11 @@ Verifica que las URLs de Unsplash/Giphy sean accesibles desde tu navegador.
 - Los usuarios solo ven reservas futuras en la interfaz principal
 - Los administradores tienen acceso completo al historial mediante el botón "Ver Historial"
 
-## 📞 Soporte
+## Soporte
 
 Para cualquier problema o sugerencia, abre un issue en el repositorio de GitHub:
 **[github.com/Afav22-lab/reserva_canchas](https://github.com/Afav22-lab/reserva_canchas)**
 
 ---
 
-Desarrollado con ❤️ usando Django | Sistema de Reservas de Canchas v2.0
+Desarrollado usando Django | Sistema de Reservas de Canchas v2.0
